@@ -1,9 +1,9 @@
 # Tapaal Tapaal
 
 ## How do I install these formulae?
-`brew install tapaal/tapaal/<formula>`
+`brew cask install tapaal/tapaal/tapaal --no-quarantine`
 
-Or `brew tap tapaal/tapaal` and then `brew install <formula>`.
+Or `brew tap tapaal/tapaal` and then `brew cask install <cask>`.
 
 Or install via URL (which will not receive updates):
 
