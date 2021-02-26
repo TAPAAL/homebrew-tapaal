@@ -5,6 +5,7 @@ cask "tapaal" do
   url "http://download.tapaal.net/fileadmin/download/tapaal-#{version.major_minor}/tapaal-#{version}-mac64.dmg"
   appcast "http://www.tapaal.net/download/"
   name "TAPAAL"
+  desc "Timed-Arc Petri Net editor, simulator and verification tool"
   homepage "https://www.tapaal.net/"
 
   app "Tapaal.app"
