@@ -1,37 +1,42 @@
-name: CI
-on:
-  push:
-    branches: master
-  pull_request:
+      name: brew test-bot
+      on:
+        push:
+          branches: master
+        pull_request:
+      jobs:
+        test-bot:
+          runs-on: ${{ matrix.os }}
+          strategy:
+            matrix:
+              os: [ubuntu-latest, macOS-latest]
+          steps:
+            - name: Set up Homebrew
+              id: set-up-homebrew
+              uses: Homebrew/actions/setup-homebrew@master
 
-jobs:
-  tests:
-    runs-on: macos-latest
+            - name: Cache Homebrew Bundler RubyGems
+              id: cache
+              uses: actions/cache@v1
+              with:
+                path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+                key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+                restore-keys: ${{ runner.os }}-rubygems-
 
-    steps:
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+            - name: Install Homebrew Bundler RubyGems
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: brew install-bundler-gems
 
-      - name: Cache Homebrew Bundler RubyGems
-        id: cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ runner.os }}-rubygems-
+            - run: brew test-bot --only-cleanup-before
 
-      - name: Install Homebrew Bundler RubyGems
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: brew install-bundler-gems
+            - run: brew test-bot --only-setup
 
-      - run: brew tap tapaal/homebrew-tapaal
-     
-      - run: .github/hooks/pre-commit
+            - run: brew test-bot --only-tap-syntax
 
-      - name: Upload bottles as artifact
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@main
-        with:
-          name: bottles
-          path: '*.bottle.*'
+            - run: brew test-bot --only-formulae
+              if: github.event_name == 'pull_request'
+
+            - name: Audit Tapaal
+              run: brew audit --cask --strict tapaal
+
+            - name: Install Tapaal
+              run: brew cask install tapaal --no-quarantine
