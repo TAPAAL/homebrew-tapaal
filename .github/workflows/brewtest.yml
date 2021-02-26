@@ -23,9 +23,9 @@ jobs:
         key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
         restore-keys: ${{ runner.os }}-rubygems-
 
-    - name: Install Homebrew Bundler RubyGems
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: brew install-bundler-gems
+    #- name: Install Homebrew Bundler RubyGems
+    #  if: steps.cache.outputs.cache-hit != 'true'
+    #  run: brew install-bundler-gems
 
     - run: brew test-bot --only-cleanup-before
 
@@ -33,21 +33,21 @@ jobs:
 
     - run: brew test-bot --only-tap-syntax
 
-    - name: Set up Ruby
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/setup-ruby@master
-      with:
-        ruby-version: '2.6'
+    #- name: Set up Ruby
+    #  if: matrix.os == 'ubuntu-latest'
+    #  uses: actions/setup-ruby@master
+    #  with:
+    #    ruby-version: '2.6'
 
-    - name: Install Bundler
-      if: matrix.os == 'ubuntu-latest'
-      run: gem install bundler -v "~>1"
+    #- name: Install Bundler
+    #  if: matrix.os == 'ubuntu-latest'
+    #  run: gem install bundler -v "~>1"
 
-    - name: Install Homebrew/homebrew-test-bot RubyGems
-      run: bundle install --jobs 4 --retry 3
+    #- name: Install Homebrew/homebrew-test-bot RubyGems
+    #  run: bundle install --jobs 4 --retry 3
 
-    - name: Run Homebrew/homebrew-test-bot RSpec tests
-      run: bundle exec rspec
+    #- name: Run Homebrew/homebrew-test-bot RSpec tests
+    #  run: bundle exec rspec
 
     - name: Build Docker image
       if: matrix.os == 'ubuntu-latest'
