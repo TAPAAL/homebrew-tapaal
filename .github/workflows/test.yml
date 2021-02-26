@@ -42,4 +42,4 @@
               run: brew audit --cask --strict tapaal
 
             - name: Install Tapaal
-              run: brew cask install tapaal --no-quarantine
+              run: brew install --cask tapaal --no-quarantine
