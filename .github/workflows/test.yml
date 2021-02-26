@@ -43,3 +43,6 @@
 
             - name: Install Tapaal
               run: brew install --cask tapaal --no-quarantine
+
+            - name: Uninstall Tapaal
+              run: brew uninstall --cask tapaal
