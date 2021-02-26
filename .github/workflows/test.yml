@@ -1,18 +1,48 @@
-name: GitHub Actions CI
-on:
-  push:
-    branches: master
-  pull_request:
-jobs:
-  tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macOS-latest]
-    steps:
-    - name: Set up Homebrew
-      id: set-up-homebrew
-      uses: Homebrew/actions/setup-homebrew@master
+      #Template https://github.com/Homebrew/brew/blob/master/Library/Homebrew/dev-cmd/tap-new.rb#L62-L105
+      
+      name: brew test-bot
+      on:
+        push:
+          branches: master
+        pull_request:
+      jobs:
+        test-bot:
+          runs-on: ${{ matrix.os }}
+          strategy:
+            matrix:
+              #os: [ubuntu-latest, macOS-latest]
+              os: [macOS-latest]
+          steps:
+            - name: Set up Homebrew
+              id: set-up-homebrew
+              uses: Homebrew/actions/setup-homebrew@master
 
- 
-    - run: brew test-bot 
+            - name: Cache Homebrew Bundler RubyGems
+              id: cache
+              uses: actions/cache@v1
+              with:
+                path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+                key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+                restore-keys: ${{ runner.os }}-rubygems-
+
+            - name: Install Homebrew Bundler RubyGems
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: brew install-bundler-gems
+
+            - run: brew test-bot --only-cleanup-before
+
+            - run: brew test-bot --only-setup
+
+            - run: brew test-bot --only-tap-syntax
+
+            - run: brew test-bot --only-formulae
+              if: github.event_name == 'pull_request'
+
+            - name: Audit Tapaal
+              run: brew audit --cask --strict tapaal
+
+            - name: Install Tapaal
+              run: brew install --cask tapaal --no-quarantine
+
+            - name: Uninstall Tapaal
+              run: brew uninstall --cask tapaal
