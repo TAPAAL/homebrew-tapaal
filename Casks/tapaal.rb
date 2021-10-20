@@ -1,6 +1,6 @@
 cask "tapaal" do
-  version "3.8.0"
-  sha256 "0CE52633FEC9AFBFB679D3DDD0A8C68F1FA8D637CDD21F441E1AB09E666D454C"
+  version "3.9.0"
+  sha256 "2E158AF9574DABB5CC1924A47178CE655984E898C785297D67EFFE5F16A0CFEB"
 
   url "https://download.tapaal.net/tapaal/tapaal-#{version.major_minor}/tapaal-#{version}-mac64.dmg"
   appcast "https://www.tapaal.net/download/"
